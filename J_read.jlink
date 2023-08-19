@@ -1,0 +1,9 @@
+#device ST32F103RC
+#device GD32F103RC
+si SWD
+speed 1000
+connect
+savebin hover_read.bin,0x08000000,0x20000
+
+rx 200
+q

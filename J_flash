@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+	OUR_NAME=`basename $0`
+	OUR_DIR=`dirname $0`
+	SCRIPT="${OUR_DIR}/${OUR_NAME}.jlink"
+else
+	SCRIPT="$1"
+fi
+# echo "JLinkExe -jtagconf -1,-1 -autoconnect 1 -CommanderScript ${SCRIPT}"
+exec JLinkExe -jtagconf -1,-1 -autoconnect 1 -CommanderScript ${SCRIPT}
