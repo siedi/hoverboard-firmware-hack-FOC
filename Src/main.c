@@ -351,6 +351,7 @@ int main(void) {
       #else 
         // ####### MIXER #######
         mixerFcn(speed << 4, steer << 4, &cmdR, &cmdL);   // This function implements the equations above
+        equalizer(&cmdL, &cmdR, &cmdL_prev, &cmdR_prev);
       #endif
 
 

@@ -1702,7 +1702,16 @@ void mixerFcn(int16_t rtu_speed, int16_t rtu_steer, int16_t *rty_speedR, int16_t
     *rty_speedL = CLAMP(*rty_speedL, INPUT_MIN, INPUT_MAX);
 }
 
+void equalizer(int16_t *speedL, int16_t *speedR, int16_t *speedL_prev, int16_t *speedR_prev) {
+  int diff_L = *speedL - *speedL_prev;
+  int diff_R = *speedR - *speedR_prev;
 
+  if (diff_L > 5)
+    *speedL = *speedL - (diff_L*2/3); //Medium 1/2 increase, slow 1/3 increase
+
+  if (diff_R > 5)
+    *speedR = *speedR - (diff_R*2/3);
+}
 
 /* =========================== Multiple Tap Function =========================== */
 
