@@ -75,6 +75,7 @@ extern int16_t speedAvgAbs;             // Average measured speed in absolute
 extern volatile uint32_t timeoutCntGen; // Timeout counter for the General timeout (PPM, PWM, Nunchuk)
 extern volatile uint8_t  timeoutFlgGen; // Timeout Flag for the General timeout (PPM, PWM, Nunchuk)
 extern uint8_t timeoutFlgADC;           // Timeout Flag for for ADC Protection: 0 = OK, 1 = Problem detected (line disconnected or wrong ADC data)
+uint8_t timeoutFlgADC_printed;
 extern uint8_t timeoutFlgSerial;        // Timeout Flag for Rx Serial command: 0 = OK, 1 = Problem detected (line disconnected or wrong Rx data)
 
 extern volatile int pwml;               // global variable for pwm left. -1000 to 1000
@@ -112,6 +113,8 @@ int16_t right_dc_curr;           // global variable for Right DC Link current
 int16_t dc_curr;                 // global variable for Total DC Link current 
 int16_t cmdL;                    // global variable for Left Command 
 int16_t cmdR;                    // global variable for Right Command 
+int16_t cmdL_prev;                    // global variable for Right Command
+int16_t cmdR_prev;                    // global variable for Right Command
 
 //------------------------------------------------------------------------
 // Local variables
@@ -348,6 +351,7 @@ int main(void) {
       #else 
         // ####### MIXER #######
         mixerFcn(speed << 4, steer << 4, &cmdR, &cmdL);   // This function implements the equations above
+        equalize(&cmdL, &cmdR, &cmdL_prev, &cmdR_prev);
       #endif
 
 
@@ -556,7 +560,12 @@ int main(void) {
       enable = 0;
       beepCount(1, 24, 1);
     } else if (timeoutFlgADC) {                                                                       // 2 beeps (low pitch): ADC timeout
-      beepCount(2, 24, 1);
+      //TODO: Beep deactivated, happens all the time
+       if (!timeoutFlgADC_printed) {
+        printf("timeoutFlgADC set, discarding beep due to bug.\n");
+        timeoutFlgADC_printed = 1;
+      }
+      //beepCount(2, 24, 1);
     } else if (timeoutFlgSerial) {                                                                    // 3 beeps (low pitch): Serial timeout
       beepCount(3, 24, 1);
     } else if (timeoutFlgGen) {                                                                       // 4 beeps (low pitch): General timeout (PPM, PWM, Nunchuk)
